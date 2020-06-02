@@ -1,0 +1,36 @@
+---
+title: "1. A Hands on Example"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+The following is an attempt to provide a small example to show the connection between prior distribution, likelihood and posterior distribution. Let’s say we want to estimate the probability that a soccer/football player8 will score a penalty kick in a shootout. We will employ the binomial distribution to model this.
+
+Our goal is to estimate a parameter  
+θ
+θ , the probability that the random knucklehead from your favorite football team will score the penalty in an overtime shootout. Let’s say that for this match it takes 10 shots per team before the game is decided9.
+
+In R, we can represent the following data for your team as follows, as well as set up some other things for later.
+```{r cars}
+shots = c('goal','goal','goal','miss','miss',
+          'goal','goal','miss','miss','goal')
+
+# convert to numeric, arbitrarily picking goal=1, miss=0
+shotsNum = as.numeric(shots=='goal')
+N = length(shots)                      # sample size
+nGoal = sum(shots=='goal')             # number of shots made
+nMiss = sum(shots=='miss')             # number of those miss
+
+```
+
+Recall the binomial distribution where we specify the number of trials for a particular observation and the probability of an event. Let’s look at the distribution for a couple values for θ equal to .5 and .85, and N = 10 observations. We will repeat this 1000 times.
+
+
+
+```{r}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

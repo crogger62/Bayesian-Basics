@@ -1,0 +1,121 @@
+---
+title: "1. A Hands on Example"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Prior, likelihood, & posterior distributions
+
+The following is an attempt to provide a small example to show the connection between prior distribution, likelihood and posterior distribution. Let’s say we want to estimate the probability that a soccer/football player8 will score a penalty kick in a shootout. We will employ the binomial distribution to model this.
+
+Our goal is to estimate a parameter  
+θ
+θ , the probability that the random knucklehead from your favorite football team will score the penalty in an overtime shootout. Let’s say that for this match it takes 10 shots per team before the game is decided9.
+
+In R, we can represent the following data for your team as follows, as well as set up some other things for later.
+```{r cars}
+shots = c('goal','goal','goal','miss','miss',
+          'goal','goal','miss','miss','goal')
+
+# convert to numeric, arbitrarily picking goal=1, miss=0
+shotsNum = as.numeric(shots=='goal')
+N = length(shots)                      # sample size
+nGoal = sum(shots=='goal')             # number of shots made
+nMiss = sum(shots=='miss')             # number of those miss
+
+```
+
+Recall the binomial distribution where we specify the number of trials for a particular observation and the probability of an event. Let’s look at the distribution for a couple values for θ equal to .5 and .85, and N = 10 observations. We will repeat this 1000 times.
+
+
+
+```{r}
+
+x1<-rbinom(1000,size=10,p=0.5)
+x2<-rbinom(1000,size=10,p=0.85)
+
+mean(x1); 
+mean(x1)*10
+
+hist(x1)
+mean(x2); hist(x2)
+mean(x2)*10
+
+```
+
+#Prior
+For our current situation, we don’t know θ and are trying to estimate it. We will start by supplying some possible values. To keep things simple, we’ll only consider 10 values that fall between 0 and 1.
+
+```{r}
+theta = seq(from=1/(N+1), to=N/(N+1), length=10)
+
+```
+
+For the Bayesian approach we must choose a prior distribution representing our initial beliefs about the estimates we might potentially consider. I provide three possibilities, and note that any one of them would work just fine for this situation. 
+
+We’ll go with a triangular distribution, which will put most of the weight toward values around .5 . While we will talk more about this later, I will go ahead and mention that this is where some specifically have taken issue with Bayesian estimation in the past, because this part of the process is too subjective for their tastes. Setting aside the fact that subjectivity is an inherent part of the scientific process, and that ignoring prior information (if explicitly available from prior research) would be blatantly unscientific, the main point to make here is that this choice is not an arbitrary one. There are many distributions we might work with, but some will be better for us than others. Again, we’ll revisit this topic later. While we will only work with one prior, I provide others you can play with.
+
+```{r}
+### prior distribution
+#Note three to choose from:
+# 1. triangular as in Kruschke text example
+pTheta = pmin(theta, 1-theta)
+
+# 2. uniform
+# pTheta = dunif(theta)
+
+# 3. beta prior with mean = .5
+# pTheta = dbeta(theta, 10, 10)
+
+# Normalize so that values sum to 1
+pTheta = pTheta/sum(pTheta) 
+```
+
+# Likelihood
+Next we will compute the likelihood of the data given some value of θ. Generally, the likelihood for some target variable y with observed values
+i…n , given some (set of) parameter(s) θ, can be expressed as follows:
+
+
+Specifically, the likelihood function for the binomial can be expressed as:
+
+
+$p(y|\theta) = \prod_{i}^n p(y_i | \theta)$
+
+Specifically, the likelihood function for the binomial can be expressed as:
+
+
+$p(y|\theta) = \binom{N}{k} \theta^k (1-\theta)^{(N-k)}$
+
+
+
+where N is the total number of possible times in which the event of interest could occur, and k number of times the event of interest occurs. Our maximum likelihood estimate in this simple setting would simply be the proportion of events witnessed out of the total number of samples. We’ll use the formula presented above. Technically, the first term is not required, but it serves to normalize the likelihood as we did with the prior.
+
+```{r}
+pDataGivenTheta = choose(N, nGoal) * theta^nGoal * (1-theta)^nMiss
+
+```
+
+#Posterior
+
+Given the prior and likelihood, we can now compute the posterior distribution via Bayes theorem. The only thing left to calculate is the denominator from Bayes theorem, then plug in the rest.
+```{r}
+pData = sum(pDataGivenTheta*pTheta)  # marginal probability of the data
+
+pThetaGivenData = pDataGivenTheta*pTheta / pData  # Bayes theorem
+```
+
+CML: Put them all together in one table:
+```{r}
+ptable<-data.frame(theta=theta, prior=pTheta, likelihood=pDataGivenTheta,posterior=pThetaGivenData)
+ptable
+```
+
+Starting with the prior column, we can see that with the triangular distribution, we’ve given most of our prior probability to the middle values with probability tapering off somewhat slowly towards either extreme. The likelihood, on the other hand, suggests the data is most likely for $\theta$  values .55-.64, though we know the specific maximum likelihood estimate for $\theta$ is the proportion for the sample, or .6. Our posterior estimate will therefore fall somewhere between the prior and likelihood estimates, and we can see it has shifted the bulk of the probability slightly away from the most likely values suggested by the prior distribution, and towards a $\theta$ value suggested by the data of .6.
+
+Let's go ahead and see the mean:
+```{r}
+(posteriorMean = sum(pThetaGivenData * theta))
+```
+

@@ -1,0 +1,14 @@
+---
+title: "LatexTest"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+$p_i$
+
+
+$p(y|\theta) = \prod_{i}^n p(y_i | \theta)$
+
