@@ -108,14 +108,30 @@ pThetaGivenData = pDataGivenTheta*pTheta / pData  # Bayes theorem
 
 CML: Put them all together in one table:
 ```{r}
-ptable<-data.frame(theta=theta, prior=pTheta, likelihood=pDataGivenTheta,posterior=pThetaGivenData)
+ptable<-data.frame(theta=theta, 
+                  prior=pTheta,   
+                  likelihood=pDataGivenTheta,
+                  posterior=pThetaGivenData)
 ptable
 ```
 
+CL: Recall
+$p(A|B) = \frac{p(B|A)*p(A)}{p(B)}$
+
+- or - 
+
+p(hypothesis | data) $\propto$ p(data | hypothesis) p(hypothesis)
+
+ - or -
+ 
+ posterior $\propto$ likelihood * prior
+ 
+ 
 Starting with the prior column, we can see that with the triangular distribution, we’ve given most of our prior probability to the middle values with probability tapering off somewhat slowly towards either extreme. The likelihood, on the other hand, suggests the data is most likely for $\theta$  values .55-.64, though we know the specific maximum likelihood estimate for $\theta$ is the proportion for the sample, or .6. Our posterior estimate will therefore fall somewhere between the prior and likelihood estimates, and we can see it has shifted the bulk of the probability slightly away from the most likely values suggested by the prior distribution, and towards a $\theta$ value suggested by the data of .6.
 
 Let's go ahead and see the mean:
 ```{r}
 (posteriorMean = sum(pThetaGivenData * theta))
 ```
-
+So, we start with a prior centered on a value of $\theta$ = 0.5, add data whose ML estimate is  
+$\theta$ = 0.6 and our posterior distribution suggests we end up somewhere in between.
