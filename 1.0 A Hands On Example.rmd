@@ -61,13 +61,13 @@ We’ll go with a triangular distribution, which will put most of the weight tow
 ### prior distribution
 #Note three to choose from:
 # 1. triangular as in Kruschke text example
-pTheta = pmin(theta, 1-theta)
+#pTheta = pmin(theta, 1-theta)
 
 # 2. uniform
-# pTheta = dunif(theta)
+#pTheta = dunif(theta)
 
 # 3. beta prior with mean = .5
-# pTheta = dbeta(theta, 10, 10)
+ pTheta = dbeta(theta, 10, 10)
 
 # Normalize so that values sum to 1
 pTheta = pTheta/sum(pTheta) 
