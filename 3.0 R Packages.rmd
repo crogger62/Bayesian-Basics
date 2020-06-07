@@ -1,0 +1,74 @@
+---
+title: "3.0 R Packages"
+output: html_notebook
+---
+
+Here I will go into a bit of detail regarding rstanarm and brms. For standard models, these should be your first choice, rather than using Stan directly. Why? For one, the underlying code that is used will be more optimized and efficient than what you come up with, and has had multiple individuals developing that code and hundreds actually using it. Furthermore, you can still, and probably should, set your priors as you wish.
+
+The nice thing about both is that you use the same syntax that you do for R modeling in general. Here is a a basic GLM in both.
+```{r}
+#Reuse from 2.0 Regression Models: 
+set.seed(8675309) #Jenny!
+
+# create a N x k matrix of covariates
+N = 250
+K = 3
+
+covariates = replicate(K, rnorm(n=N))
+colnames(covariates) = c('X1', 'X2', 'X3')
+
+# create the model matrix with intercept
+X = cbind(Intercept=1, covariates)
+
+# create a normally distributed variable that is a function of the covariates
+coefs = c(5, .2, -1.5, .9)
+mu = X %*% coefs
+sigma = 2
+y = rnorm(N, mu, sigma)
+```
+
+
+```{r}
+library(rstanarm)
+library(brms)
+
+
+
+```
+
+Run with rstanarm:
+```{r}
+stanfit<- stan_glm(y ~ X[,-1])
+
+```
+
+Run with Brm:
+```{r}
+brmnfit<- brm(y ~ X[,-1])
+
+```
+And here are a couple complexities thrown in to show some minor differences. For example, the priors are specified a bit differently, and you may have options for one that you won’t have in the other, but both will allow passing standard arguments, like cores, chains, etc. to rstan.
+
+NOTE THIS SYNTAX IS NOT RECOGNIZED
+```{r}
+stan_glm(y ~ x + z + (1|g), 
+         data=d, 
+         family = binomial(link = "logit"), 
+         prior = normal(0, 1),
+         prior_covariance = decov(regularization = 1, concentration = .5),
+         QR = TRUE,
+         chains = 2,
+         cores = 2,
+         iter = 2000)
+
+
+brm(y ~ x + z + (1|g), 
+    data=d, 
+    family = bernoulli(link = 'logit'), 
+    prior = prior(normal(0, 1), class = b,
+                  cauchy(0, 5), class = sd),
+    chains = 2,
+    cores = 2, 
+    iter = 2000)
+```
+

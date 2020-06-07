@@ -1,0 +1,18 @@
+---
+title: "3.0 R Packages"
+output: html_notebook
+---
+
+Here I will go into a bit of detail regarding rstanarm and brms. For standard models, these should be your first choice, rather than using Stan directly. Why? For one, the underlying code that is used will be more optimized and efficient than what you come up with, and has had multiple individuals developing that code and hundreds actually using it. Furthermore, you can still, and probably should, set your priors as you wish.
+
+The nice thing about both is that you use the same syntax that you do for R modeling in general. Here is a a basic GLM in both.
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
